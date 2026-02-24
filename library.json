@@ -1,0 +1,19 @@
+{
+  "name": "mBot",
+  "version": "0.1.0",
+  "description": "Learner-friendly Arduino library for BBC micro:bit v2 + MakeBit carrier robot kit. Drives motors, RGB LEDs, servos, 5x5 LED matrix (with non-blocking marquee), speaker, microphone, accelerometer, temperature sensor, and includes a serial CLI.",
+  "keywords": ["mbot", "microbit", "robot", "motors", "pca9685", "servo", "led-matrix", "cli"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jlarnal/mBot_Arduino.git"
+  },
+  "authors": [
+    {
+      "name": "jlarnal",
+      "url": "https://github.com/jlarnal"
+    }
+  ],
+  "license": "MIT",
+  "frameworks": "arduino",
+  "platforms": "nordicnrf52"
+}
