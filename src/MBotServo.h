@@ -1,14 +1,9 @@
 /**
  * @file MBotServo.h
- * @brief RC servo driver using PCA9685 PWM channels.
+ * @brief RC servo driver for the sonar pan servo (S1) via PCA9685.
  *
- * Controls up to @ref SERVO_COUNT standard hobby servos (S1–S3) through
- * the PCA9685.  Provides angle-based and raw-microsecond positioning.
- *
- * @note The PCA9685 runs at ~1 kHz (prescale 5), giving a ~983 µs period.
- *       Pulse widths above that are clamped to full-on.  Many digital
- *       servos tolerate this frequency; analogue servos typically require
- *       50 Hz — adjust PCA9685_PRESCALE in bsp.h if needed.
+ * Controls the RC servo on PCA9685 channel @ref SERVO_CH_S1.
+ * Provides angle-based and raw-microsecond positioning.
  */
 #pragma once
 
@@ -19,7 +14,7 @@ class PCA9685;
 
 /**
  * @class MBotServo
- * @brief Positions RC servos connected to PCA9685 channels S1–S3.
+ * @brief Positions the RC servo connected to PCA9685 channel S1.
  */
 class MBotServo {
 public:
@@ -30,37 +25,22 @@ public:
     explicit MBotServo(PCA9685* pca);
 
     /**
-     * @brief Move a servo to a given angle.
-     * @param index Servo index (1–3 for S1–S3).
+     * @brief Move the servo to a given angle.
      * @param angle Target angle in degrees (0–@ref SERVO_ANGLE_MAX).
      */
-    void setAngle(uint8_t index, uint16_t angle);
+    void setAngle(uint16_t angle);
 
     /**
-     * @brief Set a servo's pulse width directly.
-     * @param index   Servo index (1–3 for S1–S3).
+     * @brief Set the servo's pulse width directly.
      * @param pulseUs Pulse width in microseconds.
      */
-    void setPulse(uint8_t index, uint16_t pulseUs);
+    void setPulse(uint16_t pulseUs);
 
-    /**
-     * @brief Turn a servo channel off (no PWM output).
-     * @param index Servo index (1–3 for S1–S3).
-     */
-    void off(uint8_t index);
-
-    /** @brief Turn all servo channels off. */
-    void allOff();
+    /** @brief Turn the servo channel off (no PWM output). */
+    void off();
 
 private:
     PCA9685* _pca;  ///< Shared PWM controller.
-
-    /**
-     * @brief Resolve a 1-based servo index to a PCA9685 channel.
-     * @param index Servo index (1–3).
-     * @return PCA9685 channel number, or 0xFF if index is out of range.
-     */
-    uint8_t channelFor(uint8_t index);
 
     /**
      * @brief Convert a pulse width in microseconds to a PCA9685 tick count.

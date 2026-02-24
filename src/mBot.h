@@ -19,6 +19,9 @@
 #include "MBotMic.h"
 #include "MBotSonar.h"
 #include "MBotTemp.h"
+#include "MBotLineTracker.h"
+#include "MBotSideSensors.h"
+#include "MBotFan.h"
 #include "MBotCLI.h"
 
 /**
@@ -46,13 +49,16 @@ public:
 
     MBotMotors  motors;   ///< Dual DC motor driver.
     MBotRGB     rgb;      ///< RGB LED driver.
-    MBotServo   servo;    ///< RC servo driver (S1–S3).
+    MBotServo   servo;    ///< RC servo driver (S1, sonar pan).
     MBotDisplay display;  ///< 5×5 LED matrix.
     MBotButtons buttons;  ///< User buttons A & B.
     MBotAccel   accel;    ///< 3-axis accelerometer.
     MBotSpeaker speaker;  ///< On-board speaker.
     MBotMic     mic;      ///< MEMS microphone.
-    MBotSonar   sonar;    ///< Ultrasonic distance sensor.
-    MBotTemp    temp;     ///< Die temperature sensor.
-    MBotCLI     cli;      ///< Serial command-line interface.
+    MBotSonar       sonar;    ///< Ultrasonic distance sensor.
+    MBotTemp        temp;     ///< Die temperature sensor.
+    MBotLineTracker line;     ///< Under-chassis line tracker.
+    MBotSideSensors side;     ///< Side-mounted multi-purpose sensors.
+    MBotFan         fan;      ///< Auxiliary fan motor (L9110S).
+    MBotCLI         cli;      ///< Serial command-line interface.
 };

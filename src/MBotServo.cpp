@@ -5,34 +5,19 @@
 MBotServo::MBotServo(PCA9685* pca)
     : _pca(pca) {}
 
-void MBotServo::setAngle(uint8_t index, uint16_t angle) {
+void MBotServo::setAngle(uint16_t angle) {
     if (angle > SERVO_ANGLE_MAX) angle = SERVO_ANGLE_MAX;
     uint16_t pulseUs = SERVO_PULSE_MIN_US
         + (uint32_t)(SERVO_PULSE_MAX_US - SERVO_PULSE_MIN_US) * angle / SERVO_ANGLE_MAX;
-    setPulse(index, pulseUs);
+    setPulse(pulseUs);
 }
 
-void MBotServo::setPulse(uint8_t index, uint16_t pulseUs) {
-    uint8_t ch = channelFor(index);
-    if (ch == 0xFF) return;
-    _pca->setChannel(ch, pulseToTicks(pulseUs));
+void MBotServo::setPulse(uint16_t pulseUs) {
+    _pca->setChannel(SERVO_CH_S1, pulseToTicks(pulseUs));
 }
 
-void MBotServo::off(uint8_t index) {
-    uint8_t ch = channelFor(index);
-    if (ch == 0xFF) return;
-    _pca->setChannelOff(ch);
-}
-
-void MBotServo::allOff() {
-    for (uint8_t i = 1; i <= SERVO_COUNT; i++) {
-        off(i);
-    }
-}
-
-uint8_t MBotServo::channelFor(uint8_t index) {
-    if (index < 1 || index > SERVO_COUNT) return 0xFF;
-    return SERVO_CHANNELS[index - 1];
+void MBotServo::off() {
+    _pca->setChannelOff(SERVO_CH_S1);
 }
 
 uint16_t MBotServo::pulseToTicks(uint16_t pulseUs) {

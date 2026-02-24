@@ -147,6 +147,26 @@ bool MBotCLI::dispatch(char* line) {
         Serial.print(F("  z="));
         Serial.print(_bot->accel.z());
         Serial.println(F(" mg"));
+    } else if (strcmp(cmd, "line") == 0) {
+        Serial.print(F("L="));
+        Serial.print(_bot->line.left() ? "line" : "---");
+        Serial.print(F("  R="));
+        Serial.println(_bot->line.right() ? "line" : "---");
+    } else if (strcmp(cmd, "side") == 0) {
+        char* sub = nextToken(&rest);
+        if (sub && strcmp(sub, "flame") == 0) {
+            Serial.print(F("L="));
+            Serial.print(_bot->side.leftFlame() ? "FIRE" : "ok");
+            Serial.print(F("  R="));
+            Serial.println(_bot->side.rightFlame() ? "FIRE" : "ok");
+        } else {
+            Serial.print(F("L="));
+            Serial.print(_bot->side.leftRaw());
+            Serial.print(F("  R="));
+            Serial.println(_bot->side.rightRaw());
+        }
+    } else if (strcmp(cmd, "fan") == 0) {
+        handleFan(rest);
     } else if (strcmp(cmd, "freq") == 0) {
         char* sHz = nextToken(&rest);
         if (sHz) {
@@ -174,10 +194,9 @@ void MBotCLI::printHelp() {
         "motors set <left> <right>  (-255..+255)\n"
         "rgb <r> <g> <b>  (0-255)\n"
         "rgb off\n"
-        "servo <1-3> <angle>  (0-180)\n"
-        "servo <1-3> pulse <us>\n"
-        "servo <1-3> off\n"
-        "servo off  (all off)\n"
+        "servo <angle>  (0-180)\n"
+        "servo pulse <us>\n"
+        "servo off\n"
         "display char <c>\n"
         "display scroll <text>  (marquee)\n"
         "display scroll  (stop marquee)\n"
@@ -190,9 +209,14 @@ void MBotCLI::printHelp() {
         "temp\n"
         "mic\n"
         "sonar [samples]  (default 5, median-filtered)\n"
+        "line  (line tracker L/R)\n"
+        "side  (raw digital L/R)\n"
+        "side flame  (flame detection L/R)\n"
+        "fan forward|reverse [speed]  (0-4095)\n"
+        "fan stop\n"
         "accel\n"
         "freq [hz]  (get/set PCA9685 PWM frequency)\n"
-        "monitor accel|mic|temp|buttons|sonar\n"
+        "monitor accel|mic|temp|buttons|sonar|line|side\n"
         "monitor off\n"
         "test pca9685  (cycle outputs one by one)\n"
         "help"
@@ -255,42 +279,23 @@ void MBotCLI::handleRGB(char* args) {
 void MBotCLI::handleServo(char* args) {
     char* first = nextToken(&args);
     if (!first) {
-        Serial.println(F("usage: servo <1-3> <angle> | servo <1-3> pulse <us> | servo off"));
+        Serial.println(F("usage: servo <angle> | servo pulse <us> | servo off"));
         return;
     }
 
-    // "servo off" — all servos off
     if (strcmp(first, "off") == 0) {
-        _bot->servo.allOff();
-        Serial.println(F("ok"));
-        return;
-    }
-
-    uint8_t idx = parseInt(first);
-    if (idx < 1 || idx > SERVO_COUNT) {
-        Serial.println(F("servo index must be 1-3"));
-        return;
-    }
-
-    char* sub = nextToken(&args);
-    if (!sub) {
-        Serial.println(F("usage: servo <1-3> <angle> | pulse <us> | off"));
-        return;
-    }
-
-    if (strcmp(sub, "off") == 0) {
-        _bot->servo.off(idx);
-    } else if (strcmp(sub, "pulse") == 0) {
+        _bot->servo.off();
+    } else if (strcmp(first, "pulse") == 0) {
         char* sUs = nextToken(&args);
         if (sUs) {
-            _bot->servo.setPulse(idx, parseInt(sUs));
+            _bot->servo.setPulse(parseInt(sUs));
         } else {
-            Serial.println(F("usage: servo <1-3> pulse <us>"));
+            Serial.println(F("usage: servo pulse <us>"));
             return;
         }
     } else {
         // Treat as angle
-        _bot->servo.setAngle(idx, parseInt(sub));
+        _bot->servo.setAngle(parseInt(first));
     }
     Serial.println(F("ok"));
 }
@@ -343,6 +348,8 @@ void MBotCLI::handleMonitor(char* args) {
     else if (strcmp(sub, "temp") == 0)    _monTarget = MON_TEMP;
     else if (strcmp(sub, "buttons") == 0) _monTarget = MON_BUTTONS;
     else if (strcmp(sub, "sonar") == 0)   _monTarget = MON_SONAR;
+    else if (strcmp(sub, "line") == 0)    _monTarget = MON_LINE;
+    else if (strcmp(sub, "side") == 0)    _monTarget = MON_SIDE;
     else if (strcmp(sub, "off") == 0)   { _monTarget = MON_NONE; Serial.println(F("monitor off")); }
     else { Serial.println(F("unknown monitor target")); return; }
 
@@ -385,6 +392,14 @@ void MBotCLI::tickMonitor() {
             else { Serial.print(d, 3); Serial.println(F(" m")); }
             break;
         }
+        case MON_LINE:
+            Serial.print(_bot->line.left() ? "L " : "_ ");
+            Serial.println(_bot->line.right() ? "R" : "_");
+            break;
+        case MON_SIDE:
+            Serial.print(_bot->side.leftRaw() ? "L " : "_ ");
+            Serial.println(_bot->side.rightRaw() ? "R" : "_");
+            break;
         default:
             break;
     }
@@ -422,6 +437,25 @@ void MBotCLI::testPcaStep() {
     Serial.print(F("CH "));
     Serial.print(_testCh);
     Serial.println(F(" HIGH.  [Enter] = next"));
+}
+
+void MBotCLI::handleFan(char* args) {
+    char* sub = nextToken(&args);
+    if (!sub) { Serial.println(F("usage: fan forward|reverse [speed] | fan stop")); return; }
+
+    if (strcmp(sub, "stop") == 0) {
+        _bot->fan.stop();
+    } else if (strcmp(sub, "forward") == 0) {
+        char* s = nextToken(&args);
+        _bot->fan.forward(s ? parseInt(s) : FAN_SPEED_MAX);
+    } else if (strcmp(sub, "reverse") == 0) {
+        char* s = nextToken(&args);
+        _bot->fan.reverse(s ? parseInt(s) : FAN_SPEED_MAX);
+    } else {
+        Serial.println(F("unknown fan command"));
+        return;
+    }
+    Serial.println(F("ok"));
 }
 
 void MBotCLI::pushHistory(const char* cmd) {

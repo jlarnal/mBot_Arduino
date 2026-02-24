@@ -53,7 +53,9 @@ private:
         MON_MIC,      ///< Microphone level.
         MON_TEMP,     ///< Temperature.
         MON_BUTTONS,  ///< Button A / B state.
-        MON_SONAR     ///< Ultrasonic distance (m).
+        MON_SONAR,    ///< Ultrasonic distance (m).
+        MON_LINE,     ///< Line tracker (left / right).
+        MON_SIDE      ///< Side sensors (left / right).
     };
     MonitorTarget _monTarget;    ///< Currently active monitor target.
     unsigned long _lastMonitor;  ///< Timestamp of the last monitor print (ms).
@@ -130,6 +132,12 @@ private:
      * @param args Remaining tokens after "monitor".
      */
     void handleMonitor(char* args);
+
+    /**
+     * @brief Handle the "fan" command.
+     * @param args Remaining tokens after "fan".
+     */
+    void handleFan(char* args);
 
     /** @brief Print one monitor sample if the interval has elapsed. */
     void tickMonitor();

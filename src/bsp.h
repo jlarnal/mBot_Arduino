@@ -39,15 +39,30 @@ static constexpr uint8_t  RGB_VALUE_MAX = 255;         ///< Maximum per-channel 
 
 /// @defgroup bsp_servo RC servos (PCA9685 channels)
 /// @{
-static constexpr uint8_t  SERVO_COUNT      = 3;       ///< Number of servo outputs.
 static constexpr uint8_t  SERVO_CH_S1      = 3;       ///< PCA9685 channel for servo S1.
-static constexpr uint8_t  SERVO_CH_S2      = 4;       ///< PCA9685 channel for servo S2.
-static constexpr uint8_t  SERVO_CH_S3      = 5;       ///< PCA9685 channel for servo S3.
-static constexpr uint8_t  SERVO_CHANNELS[SERVO_COUNT] = { SERVO_CH_S1, SERVO_CH_S2, SERVO_CH_S3 }; ///< Channel lookup by index.
 static constexpr uint16_t SERVO_PULSE_MIN_US  = 500;  ///< Minimum pulse width (µs) — maps to 0°.
 static constexpr uint16_t SERVO_PULSE_MAX_US  = 2500; ///< Maximum pulse width (µs) — maps to 180°.
 static constexpr uint16_t SERVO_ANGLE_MAX     = 180;  ///< Maximum angle in degrees.
 static constexpr uint8_t  SERVO_DEFAULT_ANGLE = 90;   ///< Default centre position (degrees).
+/// @}
+
+/// @defgroup bsp_fan Auxiliary fan motor (PCA9685 channels, L9110S H-bridge)
+/// @{
+static constexpr uint8_t  FAN_FWD_CH  = 4;            ///< PCA9685 channel for fan forward.
+static constexpr uint8_t  FAN_REV_CH  = 5;            ///< PCA9685 channel for fan reverse.
+static constexpr int16_t  FAN_SPEED_MAX = 4095;       ///< Maximum fan speed (12-bit PWM).
+/// @}
+
+/// @defgroup bsp_line Line tracker (digital GPIO)
+/// @{
+static constexpr uint8_t  LINE_LEFT_PIN  = 1;         ///< GPIO pin for left line sensor.
+static constexpr uint8_t  LINE_RIGHT_PIN = 2;         ///< GPIO pin for right line sensor.
+/// @}
+
+/// @defgroup bsp_side Side sensors (digital GPIO, swappable IR / LDR / flame)
+/// @{
+static constexpr uint8_t  SIDE_LEFT_PIN  = 13;        ///< GPIO pin for left side sensor.
+static constexpr uint8_t  SIDE_RIGHT_PIN = 12;        ///< GPIO pin for right side sensor.
 /// @}
 
 
