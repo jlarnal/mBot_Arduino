@@ -130,6 +130,15 @@ bool MBotCLI::dispatch(char* line) {
         Serial.println(F(" C"));
     } else if (strcmp(cmd, "mic") == 0) {
         Serial.println(_bot->mic.level());
+    } else if (strcmp(cmd, "sonar") == 0) {
+        char* sN = nextToken(&rest);
+        float d = sN ? _bot->sonar.read(parseInt(sN)) : _bot->sonar.read();
+        if (d < 0.0f) {
+            Serial.println(F("timeout"));
+        } else {
+            Serial.print(d, 3);
+            Serial.println(F(" m"));
+        }
     } else if (strcmp(cmd, "accel") == 0) {
         Serial.print(F("x="));
         Serial.print(_bot->accel.x());
@@ -180,9 +189,10 @@ void MBotCLI::printHelp() {
         "buttons\n"
         "temp\n"
         "mic\n"
+        "sonar [samples]  (default 5, median-filtered)\n"
         "accel\n"
         "freq [hz]  (get/set PCA9685 PWM frequency)\n"
-        "monitor accel|mic|temp|buttons\n"
+        "monitor accel|mic|temp|buttons|sonar\n"
         "monitor off\n"
         "test pca9685  (cycle outputs one by one)\n"
         "help"
@@ -326,12 +336,13 @@ void MBotCLI::handleDisplay(char* args) {
 
 void MBotCLI::handleMonitor(char* args) {
     char* sub = nextToken(&args);
-    if (!sub) { Serial.println(F("usage: monitor accel|mic|temp|buttons|off")); return; }
+    if (!sub) { Serial.println(F("usage: monitor accel|mic|temp|buttons|sonar|off")); return; }
 
     if (strcmp(sub, "accel") == 0)        _monTarget = MON_ACCEL;
     else if (strcmp(sub, "mic") == 0)     _monTarget = MON_MIC;
     else if (strcmp(sub, "temp") == 0)    _monTarget = MON_TEMP;
     else if (strcmp(sub, "buttons") == 0) _monTarget = MON_BUTTONS;
+    else if (strcmp(sub, "sonar") == 0)   _monTarget = MON_SONAR;
     else if (strcmp(sub, "off") == 0)   { _monTarget = MON_NONE; Serial.println(F("monitor off")); }
     else { Serial.println(F("unknown monitor target")); return; }
 
@@ -368,6 +379,12 @@ void MBotCLI::tickMonitor() {
             Serial.print(_bot->buttons.a() ? "A " : "_ ");
             Serial.println(_bot->buttons.b() ? "B" : "_");
             break;
+        case MON_SONAR: {
+            float d = _bot->sonar.read(1);  // single sample for speed
+            if (d < 0.0f) Serial.println(F("timeout"));
+            else { Serial.print(d, 3); Serial.println(F(" m")); }
+            break;
+        }
         default:
             break;
     }

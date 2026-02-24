@@ -52,7 +52,8 @@ private:
         MON_ACCEL,    ///< Accelerometer (x / y / z).
         MON_MIC,      ///< Microphone level.
         MON_TEMP,     ///< Temperature.
-        MON_BUTTONS   ///< Button A / B state.
+        MON_BUTTONS,  ///< Button A / B state.
+        MON_SONAR     ///< Ultrasonic distance (m).
     };
     MonitorTarget _monTarget;    ///< Currently active monitor target.
     unsigned long _lastMonitor;  ///< Timestamp of the last monitor print (ms).

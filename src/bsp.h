@@ -64,6 +64,17 @@ static constexpr uint16_t DISPLAY_SCROLL_MS   = 100;  ///< Default marquee speed
 static constexpr uint16_t SHOWSTRING_MARQUEE_DEFAULT_MS = 100; ///< Default marquee speed (ms per column shift).
 /// @}
 
+/// @defgroup bsp_sonar Ultrasonic sonar (HC-SR04 style)
+/// @{
+static constexpr uint8_t  SONAR_TRIG_PIN       = 14;    ///< GPIO pin for trigger pulse.
+static constexpr uint8_t  SONAR_ECHO_PIN       = 15;    ///< GPIO pin for echo input.
+static constexpr uint16_t SONAR_US_PER_CM      = 58;    ///< Round-trip µs per centimetre (≈343 m/s).
+static constexpr uint32_t SONAR_TIMEOUT_US     = 25000; ///< Echo timeout (µs) — caps at ~4.3 m.
+static constexpr float    SONAR_MAX_RANGE_M    = 4.0f;  ///< Maximum measurable distance (m).
+static constexpr uint8_t  SONAR_DEFAULT_SAMPLES = 5;    ///< Default number of samples for filtered reads.
+static constexpr uint8_t  SONAR_MAX_SAMPLES    = 15;    ///< Maximum samples per filtered read.
+/// @}
+
 /// @defgroup bsp_speaker Speaker
 /// @{
 static constexpr uint8_t  SPEAKER_PIN       = 0;      ///< GPIO pin connected to the speaker.

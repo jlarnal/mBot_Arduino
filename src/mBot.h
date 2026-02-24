@@ -17,6 +17,7 @@
 #include "MBotAccel.h"
 #include "MBotSpeaker.h"
 #include "MBotMic.h"
+#include "MBotSonar.h"
 #include "MBotTemp.h"
 #include "MBotCLI.h"
 
@@ -51,6 +52,7 @@ public:
     MBotAccel   accel;    ///< 3-axis accelerometer.
     MBotSpeaker speaker;  ///< On-board speaker.
     MBotMic     mic;      ///< MEMS microphone.
+    MBotSonar   sonar;    ///< Ultrasonic distance sensor.
     MBotTemp    temp;     ///< Die temperature sensor.
     MBotCLI     cli;      ///< Serial command-line interface.
 };
