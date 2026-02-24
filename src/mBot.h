@@ -22,6 +22,7 @@
 #include "MBotLineTracker.h"
 #include "MBotSideSensors.h"
 #include "MBotFan.h"
+#include "MBotIR.h"
 #include "MBotCLI.h"
 
 /**
@@ -60,5 +61,6 @@ public:
     MBotLineTracker line;     ///< Under-chassis line tracker.
     MBotSideSensors side;     ///< Side-mounted multi-purpose sensors.
     MBotFan         fan;      ///< Auxiliary fan motor (L9110S).
+    MBotIR          ir;       ///< NEC IR remote receiver.
     MBotCLI         cli;      ///< Serial command-line interface.
 };

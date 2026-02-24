@@ -167,6 +167,8 @@ bool MBotCLI::dispatch(char* line) {
         }
     } else if (strcmp(cmd, "fan") == 0) {
         handleFan(rest);
+    } else if (strcmp(cmd, "ir") == 0) {
+        handleIR(rest);
     } else if (strcmp(cmd, "freq") == 0) {
         char* sHz = nextToken(&rest);
         if (sHz) {
@@ -212,11 +214,12 @@ void MBotCLI::printHelp() {
         "line  (line tracker L/R)\n"
         "side  (raw digital L/R)\n"
         "side flame  (flame detection L/R)\n"
+        "ir  (last received IR key + raw code)\n"
         "fan forward|reverse [speed]  (0-4095)\n"
         "fan stop\n"
         "accel\n"
         "freq [hz]  (get/set PCA9685 PWM frequency)\n"
-        "monitor accel|mic|temp|buttons|sonar|line|side\n"
+        "monitor accel|mic|temp|buttons|sonar|line|side|ir\n"
         "monitor off\n"
         "test pca9685  (cycle outputs one by one)\n"
         "help"
@@ -350,6 +353,7 @@ void MBotCLI::handleMonitor(char* args) {
     else if (strcmp(sub, "sonar") == 0)   _monTarget = MON_SONAR;
     else if (strcmp(sub, "line") == 0)    _monTarget = MON_LINE;
     else if (strcmp(sub, "side") == 0)    _monTarget = MON_SIDE;
+    else if (strcmp(sub, "ir") == 0)      _monTarget = MON_IR;
     else if (strcmp(sub, "off") == 0)   { _monTarget = MON_NONE; Serial.println(F("monitor off")); }
     else { Serial.println(F("unknown monitor target")); return; }
 
@@ -399,6 +403,13 @@ void MBotCLI::tickMonitor() {
         case MON_SIDE:
             Serial.print(_bot->side.leftRaw() ? "L " : "_ ");
             Serial.println(_bot->side.rightRaw() ? "R" : "_");
+            break;
+        case MON_IR:
+            if (_bot->ir.available()) {
+                Serial.print(F("0x"));
+                if (_bot->ir.command() < 0x10) Serial.print('0');
+                Serial.println(_bot->ir.command(), HEX);
+            }
             break;
         default:
             break;
@@ -456,6 +467,20 @@ void MBotCLI::handleFan(char* args) {
         return;
     }
     Serial.println(F("ok"));
+}
+
+void MBotCLI::handleIR(char* args) {
+    (void)args;
+    if (!_bot->ir.available()) {
+        Serial.println(F("no signal"));
+    } else {
+        Serial.print(F("cmd=0x"));
+        if (_bot->ir.command() < 0x10) Serial.print('0');
+        Serial.print(_bot->ir.command(), HEX);
+        Serial.print(F("  addr=0x"));
+        if (_bot->ir.address() < 0x10) Serial.print('0');
+        Serial.println(_bot->ir.address(), HEX);
+    }
 }
 
 void MBotCLI::pushHistory(const char* cmd) {

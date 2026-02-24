@@ -125,3 +125,16 @@ static constexpr uint8_t  HISTORY_COUNT      = 3;      ///< Number of remembered
 static constexpr uint8_t  HISTORY_SIZE       = CLI_BUF_SIZE; ///< Bytes per history entry.
 static constexpr uint16_t MONITOR_INTERVAL_MS = 200;   ///< Polling interval for `monitor` output (ms).
 /// @}
+
+/// @defgroup bsp_ir IR receiver (TL1838, NEC protocol)
+/// @{
+static constexpr uint8_t  IR_PIN             = 8;     ///< GPIO pin for IR receiver data.
+static constexpr uint16_t IR_NEC_HDR_MARK    = 9000;  ///< Leader mark duration (µs).
+static constexpr uint16_t IR_NEC_HDR_SPACE   = 4500;  ///< Leader space duration (µs).
+static constexpr uint16_t IR_NEC_BIT_MARK    = 562;   ///< Bit mark duration (µs).
+static constexpr uint16_t IR_NEC_ONE_SPACE   = 1687;  ///< Logic-1 space duration (µs).
+static constexpr uint16_t IR_NEC_ZERO_SPACE  = 562;   ///< Logic-0 space duration (µs).
+static constexpr uint16_t IR_NEC_RPT_SPACE   = 2250;  ///< Repeat code space duration (µs).
+static constexpr uint8_t  IR_NEC_TOLERANCE   = 25;    ///< Timing tolerance (percent).
+static constexpr uint8_t  IR_NEC_EDGES       = 68;    ///< Edges per complete NEC frame.
+/// @}

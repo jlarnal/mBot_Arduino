@@ -55,7 +55,8 @@ private:
         MON_BUTTONS,  ///< Button A / B state.
         MON_SONAR,    ///< Ultrasonic distance (m).
         MON_LINE,     ///< Line tracker (left / right).
-        MON_SIDE      ///< Side sensors (left / right).
+        MON_SIDE,     ///< Side sensors (left / right).
+        MON_IR        ///< IR remote (last key).
     };
     MonitorTarget _monTarget;    ///< Currently active monitor target.
     unsigned long _lastMonitor;  ///< Timestamp of the last monitor print (ms).
@@ -138,6 +139,12 @@ private:
      * @param args Remaining tokens after "fan".
      */
     void handleFan(char* args);
+
+    /**
+     * @brief Handle the "ir" command.
+     * @param args Remaining tokens after "ir".
+     */
+    void handleIR(char* args);
 
     /** @brief Print one monitor sample if the interval has elapsed. */
     void tickMonitor();
