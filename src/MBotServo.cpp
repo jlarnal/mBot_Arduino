@@ -3,9 +3,23 @@
 #include "bsp.h"
 
 MBotServo::MBotServo(PCA9685* pca)
-    : _pca(pca) {}
+    : _pca(pca), _freqSet(false) {}
+
+void MBotServo::ensureServoFreq() {
+    if (_freqSet) return;
+    _freqSet = true;
+
+    // Turn off RGB channels to avoid flash during frequency change
+    _pca->setChannelOff(RGB_CH_R);
+    _pca->setChannelOff(RGB_CH_G);
+    _pca->setChannelOff(RGB_CH_B);
+
+    // Switch to 60Hz (manual spec for servo operation)
+    _pca->setFreqHz(60);
+}
 
 void MBotServo::setAngle(uint16_t angle) {
+    ensureServoFreq();
     if (angle > SERVO_ANGLE_MAX) angle = SERVO_ANGLE_MAX;
     uint16_t pulseUs = SERVO_PULSE_MIN_US
         + (uint32_t)(SERVO_PULSE_MAX_US - SERVO_PULSE_MIN_US) * angle / SERVO_ANGLE_MAX;
@@ -13,6 +27,7 @@ void MBotServo::setAngle(uint16_t angle) {
 }
 
 void MBotServo::setPulse(uint16_t pulseUs) {
+    ensureServoFreq();
     _pca->setChannel(SERVO_CH_S1, pulseToTicks(pulseUs));
 }
 

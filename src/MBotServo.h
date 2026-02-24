@@ -40,7 +40,11 @@ public:
     void off();
 
 private:
-    PCA9685* _pca;  ///< Shared PWM controller.
+    PCA9685* _pca;      ///< Shared PWM controller.
+    bool     _freqSet;  ///< true after 60Hz switch has been performed.
+
+    /** @brief Switch PCA9685 to 60Hz if not already done. Turns off RGB channels first. */
+    void ensureServoFreq();
 
     /**
      * @brief Convert a pulse width in microseconds to a PCA9685 tick count.
