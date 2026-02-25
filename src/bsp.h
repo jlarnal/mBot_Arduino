@@ -40,6 +40,7 @@ static constexpr uint8_t  RGB_VALUE_MAX = 255;         ///< Maximum per-channel 
 /// @defgroup bsp_servo RC servos (PCA9685 channels)
 /// @{
 static constexpr uint8_t  SERVO_CH_S1      = 3;       ///< PCA9685 channel for servo S1.
+static constexpr int8_t   SERVO_TRIM_DEG   = -5;      ///< Mechanical trim: servo spline offset from chassis axis (degrees).
 static constexpr uint16_t SERVO_PULSE_MIN_US  = 500;  ///< Minimum pulse width (µs) — maps to 0°.
 static constexpr uint16_t SERVO_PULSE_MAX_US  = 2500; ///< Maximum pulse width (µs) — maps to 180°.
 static constexpr uint16_t SERVO_ANGLE_MAX     = 180;  ///< Maximum angle in degrees.

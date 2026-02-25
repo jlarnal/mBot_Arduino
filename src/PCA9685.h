@@ -54,6 +54,13 @@ public:
     void setChannelOff(uint8_t channel);
 
     /**
+     * @brief Read back the raw OFF tick count for a channel.
+     * @param channel Channel index (0–15).
+     * @return 12-bit OFF value (or 0x1000 if the channel is fully off).
+     */
+    uint16_t getChannelOff(uint8_t channel);
+
+    /**
      * @brief Set the PWM frequency.
      *
      * Puts the chip to sleep, writes the prescaler, and restarts.

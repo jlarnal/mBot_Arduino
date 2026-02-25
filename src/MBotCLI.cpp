@@ -291,14 +291,14 @@ void MBotCLI::handleServo(char* args) {
     } else if (strcmp(first, "pulse") == 0) {
         char* sUs = nextToken(&args);
         if (sUs) {
-            _bot->servo.setPulse(parseInt(sUs));
+            _bot->servo.setPulse_us(parseInt(sUs));
         } else {
             Serial.println(F("usage: servo pulse <us>"));
             return;
         }
     } else {
         // Treat as angle
-        _bot->servo.setAngle(parseInt(first));
+        _bot->servo.setAngle((int8_t)parseInt(first));
     }
     Serial.println(F("ok"));
 }

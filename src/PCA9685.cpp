@@ -94,6 +94,14 @@ void PCA9685::setChannelOff(uint8_t channel) {
     setPWM(channel, 0, 0x1000);
 }
 
+uint16_t PCA9685::getChannelOff(uint8_t channel) {
+    ensureInit();
+    uint8_t base = REG_LED0_ON_L + 4 * channel + 2; // OFF_L register
+    uint8_t lo = readReg(base);
+    uint8_t hi = readReg(base + 1);
+    return (uint16_t)lo | ((uint16_t)hi << 8);
+}
+
 void PCA9685::writeReg(uint8_t reg, uint8_t value) {
     Wire.beginTransmission(_addr);
     Wire.write(reg);

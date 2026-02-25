@@ -25,16 +25,22 @@ public:
     explicit MBotServo(PCA9685* pca);
 
     /**
-     * @brief Move the servo to a given angle.
-     * @param angle Target angle in degrees (0–@ref SERVO_ANGLE_MAX).
-     */
-    void setAngle(uint16_t angle);
-
-    /**
      * @brief Set the servo's pulse width directly.
      * @param pulseUs Pulse width in microseconds.
      */
-    void setPulse(uint16_t pulseUs);
+    void setPulse_us(uint16_t pulseUs);
+
+    
+    /** @brief Return the current servo pulse width in microseconds. */
+    uint16_t getPulse_us();
+
+
+    void setAngle(int8_t angle=0);
+
+    /** @brief Read back the current servo angle from the hardware.
+     *  @return Angle in degrees (−45 to +45), derived from the active pulse width.
+     */
+    int8_t getAngle();
 
     /** @brief Turn the servo channel off (no PWM output). */
     void off();
@@ -46,10 +52,13 @@ private:
     /** @brief Switch PCA9685 to 60Hz if not already done. Turns off RGB channels first. */
     void ensureServoFreq();
 
-    /**
-     * @brief Convert a pulse width in microseconds to a PCA9685 tick count.
+   
+    /** @brief Return the current servo pulse width in PCA9685 ticks. */
+    uint16_t getPulseTicks();
+
+    /** @brief Convert a pulse width in microseconds to a PCA9685 tick count.
      * @param pulseUs Pulse width in microseconds.
      * @return 12-bit tick count (0–4095).
      */
-    uint16_t pulseToTicks(uint16_t pulseUs);
+    uint16_t usToTicks(uint16_t pulseUs);
 };
